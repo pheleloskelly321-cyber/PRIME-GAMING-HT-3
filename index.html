@@ -18,7 +18,7 @@
         .flex-active { display: flex !important; }
         
         .no-scrollbar::-webkit-scrollbar { display: none; }
-        #bet-modal { backdrop-filter: blur(10px); background: rgba(0,0,0,0.7); }
+        .modal-bg { backdrop-filter: blur(10px); background: rgba(0,0,0,0.8); }
 
         .profile-img-container:hover .edit-overlay { opacity: 1; }
     </style>
@@ -75,8 +75,8 @@
                 <h2 id="display-username" class="mt-4 text-2xl font-black italic uppercase">Itilizatè</h2>
                 
                 <div class="flex gap-4 mt-6 w-full max-w-xs">
-                    <button class="flex-1 bg-green-600 hover:bg-green-700 py-3 rounded-2xl font-black text-[10px] uppercase tracking-widest shadow-lg shadow-green-900/20 active:scale-95 transition-all">Depo</button>
-                    <button class="flex-1 bg-white/10 hover:bg-white/20 py-3 rounded-2xl font-black text-[10px] uppercase tracking-widest border border-white/10 active:scale-95 transition-all">Retrè</button>
+                    <button onclick="toggleModal('deposit-modal', true)" class="flex-1 bg-green-600 hover:bg-green-700 py-3 rounded-2xl font-black text-[10px] uppercase tracking-widest shadow-lg shadow-green-900/20 active:scale-95 transition-all">Depo</button>
+                    <button onclick="toggleModal('withdraw-modal', true)" class="flex-1 bg-white/10 hover:bg-white/20 py-3 rounded-2xl font-black text-[10px] uppercase tracking-widest border border-white/10 active:scale-95 transition-all">Retrè</button>
                 </div>
             </div>
 
@@ -110,25 +110,43 @@
         </div>
     </section>
 
-    <nav id="bottom-nav" class="hidden fixed bottom-0 left-0 right-0 h-22 bg-[#0b0e14]/95 border-t border-white/5 flex justify-around items-center px-6 z-50 backdrop-blur-lg">
-        <button onclick="switchPage('home-page')" id="nav-home" class="flex flex-col items-center gap-1 transition-all">
-            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
-            <span class="text-[9px] font-bold uppercase tracking-widest">Akèy</span>
-        </button>
-        <button id="open-bet-modal" class="bg-blue-600 w-14 h-14 rounded-2xl flex items-center justify-center -translate-y-5 shadow-2xl shadow-blue-600/50 border-4 border-[#0b0e14] active:scale-90 transition-all">
-            <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 4v16m8-8H4"/></svg>
-        </button>
-        <button onclick="switchPage('profile-page')" id="nav-profile" class="flex flex-col items-center gap-1 text-gray-600 transition-all">
-            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
-            <span class="text-[9px] font-bold uppercase tracking-widest">Pwofil</span>
-        </button>
-    </nav>
+    <div id="deposit-modal" class="hidden fixed inset-0 z-[100] flex items-center justify-center p-4 modal-bg">
+        <div class="glass-card w-full max-w-sm p-6 rounded-[2.5rem] animate__animated animate__fadeInUp">
+            <h2 class="text-lg font-black italic text-green-500 uppercase mb-4 text-center">Fè yon depo</h2>
+            <div class="bg-black/50 p-4 rounded-2xl border border-white/5 space-y-2 mb-6 text-sm">
+                <p class="flex justify-between"><span>Moncash:</span> <span class="font-black text-blue-400">+509 37 57 7509</span></p>
+                <p class="flex justify-between"><span>Natcash:</span> <span class="font-black text-blue-400">+509 35 86 2688</span></p>
+            </div>
+            <div class="space-y-4">
+                <input type="text" id="depo-id" placeholder="Kòd Tranzaksyon (ID)" class="w-full p-4 rounded-2xl input-field text-sm">
+                <div class="relative">
+                    <label class="block text-[10px] text-gray-500 uppercase mb-1 ml-2">Voye Foto Prèv (Screenshot)</label>
+                    <input type="file" id="depo-proof" class="w-full text-xs text-gray-400 file:bg-blue-600 file:border-none file:rounded-full file:px-4 file:py-1 file:text-white file:font-bold">
+                </div>
+                <button id="submit-depo" class="w-full bg-blue-600 py-4 rounded-2xl font-black text-xs uppercase">Voye bay Admin</button>
+                <button onclick="toggleModal('deposit-modal', false)" class="w-full text-gray-500 text-[10px] font-bold uppercase">Anile</button>
+            </div>
+        </div>
+    </div>
 
-    <div id="bet-modal" class="hidden fixed inset-0 z-[100] flex items-center justify-center p-4">
+    <div id="withdraw-modal" class="hidden fixed inset-0 z-[100] flex items-center justify-center p-4 modal-bg">
+        <div class="glass-card w-full max-w-sm p-6 rounded-[2.5rem] animate__animated animate__fadeInUp">
+            <h2 class="text-lg font-black italic text-red-500 uppercase mb-4 text-center">Mande yon retrè</h2>
+            <p class="text-[10px] text-center text-gray-400 mb-6 italic">Minimum pou retire se <span class="text-white font-bold">250 HTG</span></p>
+            <div class="space-y-4">
+                <input type="number" id="withdraw-amount" placeholder="Montan HTG" class="w-full p-4 rounded-2xl input-field text-sm">
+                <input type="text" id="withdraw-phone" placeholder="Nimewo Moncash/Natcash" class="w-full p-4 rounded-2xl input-field text-sm">
+                <button id="submit-withdraw" class="w-full bg-red-600 py-4 rounded-2xl font-black text-xs uppercase">Valide Retrè</button>
+                <button onclick="toggleModal('withdraw-modal', false)" class="w-full text-gray-500 text-[10px] font-bold uppercase">Anile</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="bet-modal" class="hidden fixed inset-0 z-[100] flex items-center justify-center p-4 modal-bg">
         <div class="glass-card w-full max-w-sm p-6 rounded-[2.5rem] animate__animated animate__zoomIn">
             <div class="flex justify-between items-center mb-6">
                 <h2 class="text-xl font-black italic text-blue-500 uppercase">Lage yon defi</h2>
-                <button id="close-modal" class="text-gray-400 hover:text-white bg-white/5 p-2 rounded-full">
+                <button onclick="toggleModal('bet-modal', false)" class="text-gray-400 hover:text-white bg-white/5 p-2 rounded-full">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
                 </button>
             </div>
@@ -137,14 +155,27 @@
                     <option value="Free Fire">Free Fire</option>
                     <option value="CODM">CODM</option>
                     <option value="PUBG">PUBG</option>
-                    <option value="DLS">DLS</option>
                 </select>
                 <input type="number" id="bet-amount" placeholder="Montan HTG (Min 100)" class="w-full p-4 rounded-2xl input-field text-sm">
                 <textarea id="bet-rules" placeholder="Règleman (ex: 1v1 Sniper)..." class="w-full p-4 rounded-2xl input-field text-sm h-24"></textarea>
-                <button id="confirm-bet-btn" class="w-full bg-blue-600 hover:bg-blue-700 py-4 rounded-2xl font-black shadow-lg shadow-blue-900/40">PUBLYE PARI A</button>
+                <button id="confirm-bet-btn" class="w-full bg-blue-600 py-4 rounded-2xl font-black">PUBLYE PARI A</button>
             </div>
         </div>
     </div>
+
+    <nav id="bottom-nav" class="hidden fixed bottom-0 left-0 right-0 h-22 bg-[#0b0e14]/95 border-t border-white/5 flex justify-around items-center px-6 z-50 backdrop-blur-lg">
+        <button onclick="switchPage('home-page')" id="nav-home" class="flex flex-col items-center gap-1 transition-all">
+            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+            <span class="text-[9px] font-bold uppercase tracking-widest">Akèy</span>
+        </button>
+        <button onclick="toggleModal('bet-modal', true)" class="bg-blue-600 w-14 h-14 rounded-2xl flex items-center justify-center -translate-y-5 shadow-2xl shadow-blue-600/50 border-4 border-[#0b0e14] active:scale-90 transition-all">
+            <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 4v16m8-8H4"/></svg>
+        </button>
+        <button onclick="switchPage('profile-page')" id="nav-profile" class="flex flex-col items-center gap-1 text-gray-600 transition-all">
+            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+            <span class="text-[9px] font-bold uppercase tracking-widest">Pwofil</span>
+        </button>
+    </nav>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
@@ -192,14 +223,69 @@
             });
         }
 
-        // LAGE PARI (LOGIK COMPLÈTE)
+        // LÒJIK DEPO
+        document.getElementById('submit-depo').onclick = async () => {
+            const transId = document.getElementById('depo-id').value.trim();
+            const proofFile = document.getElementById('depo-proof').files[0];
+
+            if (!transId || !proofFile) return alert("Tanpri mete ID tranzaksyon an ak foto prèv la!");
+
+            const reader = new FileReader();
+            reader.onloadend = async () => {
+                try {
+                    const depoRef = push(ref(db, 'admin_requests/deposits'));
+                    await set(depoRef, {
+                        user_id: auth.currentUser.uid,
+                        username: currentUserData.username,
+                        transaction_id: transId,
+                        proof_img: reader.result,
+                        status: "pending",
+                        timestamp: serverTimestamp()
+                    });
+                    alert("Prèv la voye! Admin ap verifye sa nan kèk minit.");
+                    toggleModal('deposit-modal', false);
+                } catch (e) { alert(e.message); }
+            };
+            reader.readAsDataURL(proofFile);
+        };
+
+        // LÒJIK RETRÈ
+        document.getElementById('submit-withdraw').onclick = async () => {
+            const amount = parseInt(document.getElementById('withdraw-amount').value);
+            const phone = document.getElementById('withdraw-phone').value.trim();
+
+            if (!amount || amount < 250) return alert("Ou dwe retire o mwen 250 HTG!");
+            if (!phone) return alert("Mete nimewo pou resevwa kòb la!");
+            if (currentUserData.balance < amount) return alert("Balans ou pa ase pou retrè sa!");
+
+            try {
+                const withdrawRef = push(ref(db, 'admin_requests/withdrawals'));
+                await set(withdrawRef, {
+                    user_id: auth.currentUser.uid,
+                    username: currentUserData.username,
+                    amount: amount,
+                    phone: phone,
+                    status: "pending",
+                    timestamp: serverTimestamp()
+                });
+                
+                // Retire kòb la sou balans lan poul pa ka itilize li pandan lap tann
+                await update(ref(db, `users/${auth.currentUser.uid}`), {
+                    balance: currentUserData.balance - amount
+                });
+
+                alert("Retrè Validé! W ap resevwa kòb la nan mwens pase 24h.");
+                toggleModal('withdraw-modal', false);
+            } catch (e) { alert(e.message); }
+        };
+
+        // LÒJIK DEFI (Pari)
         document.getElementById('confirm-bet-btn').onclick = async () => {
             const game = document.getElementById('bet-game').value;
             const amount = parseInt(document.getElementById('bet-amount').value);
             const rules = document.getElementById('bet-rules').value.trim();
 
             if (!amount || amount < 100) return alert("Minimòm se 100 HTG");
-            if (!rules) return alert("Mete règleman jwèt la");
             if (currentUserData.balance < amount) return alert("Balans ou pa ase!");
 
             try {
@@ -214,15 +300,14 @@
                     timestamp: serverTimestamp()
                 });
 
-                // Retire kòb nan balans epi mete nan Escrow
                 await update(ref(db, `users/${auth.currentUser.uid}`), {
                     balance: currentUserData.balance - amount,
                     escrow: (currentUserData.escrow || 0) + amount
                 });
 
                 alert("Defi a pibliye!");
-                document.getElementById('bet-modal').classList.add('hidden');
-            } catch (e) { alert("Erè: " + e.message); }
+                toggleModal('bet-modal', false);
+            } catch (e) { alert(e.message); }
         };
 
         // CHAJE PARI YO
@@ -249,13 +334,24 @@
                             </div>`;
                         }
                     });
-                } else {
-                    list.innerHTML = "<p class='text-center opacity-20 py-10 italic text-xs'>Pa gen defi disponib...</p>";
                 }
             });
         }
 
-        // SAVE PROFILE & IMAGE
+        // NAVIGATION & MODALS
+        window.switchPage = (pageId) => {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('page-active', 'flex-active'));
+            document.getElementById(pageId).classList.add(pageId === 'auth-page' ? 'flex-active' : 'page-active');
+            document.getElementById('bottom-nav').classList.toggle('hidden', pageId === 'auth-page');
+            document.getElementById('nav-home').classList.toggle('nav-active', pageId === 'home-page');
+            document.getElementById('nav-profile').classList.toggle('nav-active', pageId === 'profile-page');
+        };
+
+        window.toggleModal = (id, show) => {
+            document.getElementById(id).classList.toggle('hidden', !show);
+        };
+
+        // SAVE PROFILE
         document.getElementById('save-profile-btn').onclick = async () => {
             const n = document.getElementById('edit-username').value;
             const p = document.getElementById('edit-phone').value;
@@ -271,7 +367,7 @@
             if (e.target.files[0]) reader.readAsDataURL(e.target.files[0]);
         };
 
-        // AUTH & NAV
+        // AUTH
         document.getElementById('main-btn').onclick = async () => {
             const email = document.getElementById('email').value.trim();
             const pass = document.getElementById('password').value;
@@ -289,14 +385,6 @@
             }
         };
 
-        window.switchPage = (pageId) => {
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('page-active', 'flex-active'));
-            document.getElementById(pageId).classList.add(pageId === 'auth-page' ? 'flex-active' : 'page-active');
-            document.getElementById('bottom-nav').classList.toggle('hidden', pageId === 'auth-page');
-            document.getElementById('nav-home').classList.toggle('nav-active', pageId === 'home-page');
-            document.getElementById('nav-profile').classList.toggle('nav-active', pageId === 'profile-page');
-        };
-
         document.getElementById('toggle-btn').onclick = () => {
             isSignup = !isSignup;
             document.getElementById('signup-fields').classList.toggle('hidden');
@@ -304,8 +392,6 @@
         };
 
         window.signOutUser = () => signOut(auth);
-        document.getElementById('open-bet-modal').onclick = () => document.getElementById('bet-modal').classList.remove('hidden');
-        document.getElementById('close-modal').onclick = () => document.getElementById('bet-modal').classList.add('hidden');
     </script>
 </body>
 </html>
