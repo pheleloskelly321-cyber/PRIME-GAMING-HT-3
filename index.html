@@ -18,9 +18,13 @@
         .flex-active { display: flex !important; }
         
         .no-scrollbar::-webkit-scrollbar { display: none; }
-        .modal-bg { backdrop-filter: blur(10px); background: rgba(0,0,0,0.8); }
+        .modal-bg { backdrop-filter: blur(15px); background: rgba(0,0,0,0.85); }
 
         .profile-img-container:hover .edit-overlay { opacity: 1; }
+
+        /* Style pou Chat Messages */
+        .msg-mine { background: #2563eb; border-radius: 1.2rem 1.2rem 0 1.2rem; align-self: flex-end; }
+        .msg-other { background: #1f2937; border-radius: 1.2rem 1.2rem 1.2rem 0; align-self: flex-start; }
     </style>
 </head>
 <body>
@@ -73,42 +77,55 @@
                     <input type="file" id="upload-profile" class="hidden" accept="image/*">
                 </div>
                 <h2 id="display-username" class="mt-4 text-2xl font-black italic uppercase">Itilizatè</h2>
-                
                 <div class="flex gap-4 mt-6 w-full max-w-xs">
-                    <button onclick="toggleModal('deposit-modal', true)" class="flex-1 bg-green-600 hover:bg-green-700 py-3 rounded-2xl font-black text-[10px] uppercase tracking-widest shadow-lg shadow-green-900/20 active:scale-95 transition-all">Depo</button>
+                    <button onclick="toggleModal('deposit-modal', true)" class="flex-1 bg-green-600 hover:bg-green-700 py-3 rounded-2xl font-black text-[10px] uppercase tracking-widest shadow-lg active:scale-95 transition-all">Depo</button>
                     <button onclick="toggleModal('withdraw-modal', true)" class="flex-1 bg-white/10 hover:bg-white/20 py-3 rounded-2xl font-black text-[10px] uppercase tracking-widest border border-white/10 active:scale-95 transition-all">Retrè</button>
                 </div>
             </div>
-
             <div class="grid grid-cols-2 gap-4 mt-8">
-                <div class="glass-card p-4 rounded-3xl text-center">
-                    <p class="text-[10px] text-gray-500 uppercase font-black">Genyen</p>
-                    <p id="stats-wins" class="text-xl font-black text-green-400">0</p>
-                </div>
-                <div class="glass-card p-4 rounded-3xl text-center">
-                    <p class="text-[10px] text-gray-500 uppercase font-black">Pèdi</p>
-                    <p id="stats-losses" class="text-xl font-black text-red-400">0</p>
-                </div>
-                <div class="glass-card p-4 rounded-3xl text-center">
-                    <p class="text-[10px] text-gray-500 uppercase font-black">Escrow</p>
-                    <p id="stats-escrow" class="text-xl font-black text-yellow-400">0</p>
-                </div>
-                <div class="glass-card p-4 rounded-3xl text-center">
-                    <p class="text-[10px] text-gray-500 uppercase font-black">Trans.</p>
-                    <p id="stats-trans" class="text-xl font-black text-blue-400">0</p>
-                </div>
+                <div class="glass-card p-4 rounded-3xl text-center"><p class="text-[10px] text-gray-500 uppercase font-black">Genyen</p><p id="stats-wins" class="text-xl font-black text-green-400">0</p></div>
+                <div class="glass-card p-4 rounded-3xl text-center"><p class="text-[10px] text-gray-500 uppercase font-black">Pèdi</p><p id="stats-losses" class="text-xl font-black text-red-400">0</p></div>
+                <div class="glass-card p-4 rounded-3xl text-center"><p class="text-[10px] text-gray-500 uppercase font-black">Escrow</p><p id="stats-escrow" class="text-xl font-black text-yellow-400">0</p></div>
+                <div class="glass-card p-4 rounded-3xl text-center"><p class="text-[10px] text-gray-500 uppercase font-black">Trans.</p><p id="stats-trans" class="text-xl font-black text-blue-400">0</p></div>
             </div>
-
             <div class="mt-8 space-y-4">
                 <div class="bg-white/5 p-6 rounded-[2rem] border border-white/5">
                     <input type="text" id="edit-username" placeholder="Chanje Username" class="w-full p-4 rounded-2xl input-field text-sm mb-3">
                     <input type="text" id="edit-phone" placeholder="Chanje Nimewo Telefòn" class="w-full p-4 rounded-2xl input-field text-sm">
                     <button id="save-profile-btn" class="w-full mt-4 bg-blue-600 py-4 rounded-2xl font-black text-[10px] uppercase tracking-widest">Sove Chanjman</button>
                 </div>
-                <button onclick="signOutUser()" class="w-full py-4 text-red-500 text-[10px] font-black uppercase tracking-widest opacity-50 hover:opacity-100">Dekonekte</button>
+                <button onclick="signOutUser()" class="w-full py-4 text-red-500 text-[10px] font-black uppercase opacity-50 hover:opacity-100">Dekonekte</button>
             </div>
         </div>
     </section>
+
+    <div id="chat-modal" class="hidden fixed inset-0 z-[200] flex flex-col modal-bg animate__animated animate__slideInUp">
+        <header class="p-6 flex justify-between items-center border-b border-white/10">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center font-black italic">P</div>
+                <div>
+                    <h2 class="text-sm font-black uppercase tracking-widest">Chat Global</h2>
+                    <p class="text-[9px] text-green-500 font-bold uppercase">Prisme Kominote</p>
+                </div>
+            </div>
+            <button onclick="toggleModal('chat-modal', false)" class="bg-white/5 p-3 rounded-full text-gray-400"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg></button>
+        </header>
+        <div id="chat-messages" class="flex-1 overflow-y-auto p-6 space-y-4 no-scrollbar flex flex-col">
+            </div>
+        <div class="p-6 border-t border-white/10 bg-black/50">
+            <div class="flex gap-2 bg-white/5 p-2 rounded-[2rem] border border-white/10 focus-within:border-blue-500 transition-all">
+                <input type="text" id="chat-input" placeholder="Ekri yon mesaj..." class="flex-1 bg-transparent px-4 py-2 outline-none text-sm">
+                <button id="send-msg-btn" class="bg-blue-600 p-3 rounded-full shadow-lg shadow-blue-600/20 active:scale-90 transition-all">
+                    <svg class="w-5 h-5 rotate-90" fill="currentColor" viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <button id="floating-chat-btn" onclick="toggleModal('chat-modal', true)" class="hidden fixed bottom-24 right-6 w-14 h-14 bg-blue-600 rounded-full flex items-center justify-center shadow-2xl z-40 animate__animated animate__bounceIn">
+        <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/></svg>
+        <span class="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full border-2 border-[#0b0e14]"></span>
+    </button>
 
     <div id="deposit-modal" class="hidden fixed inset-0 z-[100] flex items-center justify-center p-4 modal-bg">
         <div class="glass-card w-full max-w-sm p-6 rounded-[2.5rem]">
@@ -179,7 +196,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut, sendEmailVerification } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-        import { getDatabase, ref, set, onValue, push, serverTimestamp, update, remove } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+        import { getDatabase, ref, set, onValue, push, serverTimestamp, update, remove, limitToLast, query } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyCHVG_0BCd0V_lFSmg3_2qyC5rKclG-b0M",
@@ -202,7 +219,12 @@
                 switchPage('home-page');
                 syncUserData(user.uid);
                 loadChallenges();
-            } else { switchPage('auth-page'); }
+                loadChatMessages();
+                document.getElementById('floating-chat-btn').classList.remove('hidden');
+            } else { 
+                switchPage('auth-page');
+                document.getElementById('floating-chat-btn').classList.add('hidden');
+            }
         });
 
         function syncUserData(uid) {
@@ -222,16 +244,44 @@
             });
         }
 
-        window.cancelChallenge = async (id, amount) => {
-            if (confirm("Èske ou vle anile defi sa?")) {
-                await remove(ref(db, `challenges/${id}`));
-                await update(ref(db, `users/${auth.currentUser.uid}`), {
-                    balance: currentUserData.balance + amount,
-                    escrow: Math.max(0, (currentUserData.escrow || 0) - amount)
-                });
-            }
+        // --- CHAT SYSTEM (NEW) ---
+        function loadChatMessages() {
+            const chatQuery = query(ref(db, 'global_chat'), limitToLast(50));
+            onValue(chatQuery, (snap) => {
+                const chatBox = document.getElementById('chat-messages');
+                chatBox.innerHTML = "";
+                const data = snap.val();
+                if (data) {
+                    Object.keys(data).forEach(id => {
+                        const m = data[id];
+                        const isMine = m.sender_id === auth.currentUser.uid;
+                        chatBox.innerHTML += `
+                        <div class="flex flex-col ${isMine ? 'items-end' : 'items-start'} animate__animated animate__fadeInUp animate__faster">
+                            <span class="text-[9px] text-gray-500 font-bold mb-1 ml-2 mr-2 uppercase">${isMine ? 'Mwen' : m.sender_name}</span>
+                            <div class="p-3 max-w-[80%] text-sm ${isMine ? 'msg-mine' : 'msg-other'}">
+                                ${m.text}
+                            </div>
+                        </div>`;
+                    });
+                    chatBox.scrollTop = chatBox.scrollHeight;
+                }
+            });
+        }
+
+        document.getElementById('send-msg-btn').onclick = async () => {
+            const input = document.getElementById('chat-input');
+            const text = input.value.trim();
+            if (!text) return;
+            input.value = "";
+            await push(ref(db, 'global_chat'), {
+                sender_id: auth.currentUser.uid,
+                sender_name: currentUserData.username,
+                text: text,
+                timestamp: serverTimestamp()
+            });
         };
 
+        // --- CHALLENGES ---
         function loadChallenges() {
             onValue(ref(db, 'challenges'), (snap) => {
                 const list = document.getElementById('challenges-list');
@@ -268,11 +318,19 @@
                             </div>`;
                         }
                     });
-                } else {
-                    list.innerHTML = "<p class='text-center opacity-20 py-10 italic text-xs uppercase'>Pa gen defi disponib</p>";
                 }
             });
         }
+
+        window.cancelChallenge = async (id, amount) => {
+            if (confirm("Èske ou vle anile defi sa?")) {
+                await remove(ref(db, `challenges/${id}`));
+                await update(ref(db, `users/${auth.currentUser.uid}`), {
+                    balance: currentUserData.balance + amount,
+                    escrow: Math.max(0, (currentUserData.escrow || 0) - amount)
+                });
+            }
+        };
 
         document.getElementById('confirm-bet-btn').onclick = async () => {
             const game = document.getElementById('bet-game').value;
@@ -288,58 +346,20 @@
             try {
                 const challengeRef = push(ref(db, 'challenges'));
                 await set(challengeRef, {
-                    creator_id: auth.currentUser.uid,
-                    creator_name: currentUserData.username,
-                    game,
-                    player_uid: playerUid,
-                    room_id: roomId,
-                    room_pass: roomPass,
-                    bet_amount: amount,
-                    rules: rules || "Okenn règleman espesyal",
-                    status: "open",
-                    timestamp: serverTimestamp()
+                    creator_id: auth.currentUser.uid, creator_name: currentUserData.username,
+                    game, player_uid: playerUid, room_id: roomId, room_pass: roomPass,
+                    bet_amount: amount, rules: rules || "Okenn règleman espesyal",
+                    status: "open", timestamp: serverTimestamp()
                 });
-
                 await update(ref(db, `users/${auth.currentUser.uid}`), {
                     balance: currentUserData.balance - amount,
                     escrow: (currentUserData.escrow || 0) + amount
                 });
-
-                alert("Defi pibliye!");
                 toggleModal('bet-modal', false);
-                // Reset bwat yo
-                ['bet-uid', 'bet-room', 'bet-room-pass', 'bet-amount', 'bet-rules'].forEach(id => document.getElementById(id).value = "");
             } catch (e) { alert(e.message); }
         };
 
-        // --- DEPO, RETRÈ & UTILS ---
-        document.getElementById('submit-depo').onclick = async () => {
-            const transId = document.getElementById('depo-id').value.trim();
-            const proofFile = document.getElementById('depo-proof').files[0];
-            if (!transId || !proofFile) return alert("Mete tout enfòmasyon!");
-            const reader = new FileReader();
-            reader.onloadend = async () => {
-                await set(push(ref(db, 'admin_requests/deposits')), {
-                    user_id: auth.currentUser.uid, username: currentUserData.username,
-                    transaction_id: transId, proof_img: reader.result, status: "pending", timestamp: serverTimestamp()
-                });
-                alert("Prèv voye!"); toggleModal('deposit-modal', false);
-            };
-            reader.readAsDataURL(proofFile);
-        };
-
-        document.getElementById('submit-withdraw').onclick = async () => {
-            const amount = parseInt(document.getElementById('withdraw-amount').value);
-            const phone = document.getElementById('withdraw-phone').value.trim();
-            if (amount < 250 || currentUserData.balance < amount) return alert("Tcheke montan an!");
-            await set(push(ref(db, 'admin_requests/withdrawals')), {
-                user_id: auth.currentUser.uid, username: currentUserData.username,
-                amount, phone, status: "pending", timestamp: serverTimestamp()
-            });
-            await update(ref(db, `users/${auth.currentUser.uid}`), { balance: currentUserData.balance - amount });
-            alert("Mande voye!"); toggleModal('withdraw-modal', false);
-        };
-
+        // --- UTILS ---
         window.switchPage = (pageId) => {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('page-active', 'flex-active'));
             document.getElementById(pageId).classList.add(pageId === 'auth-page' ? 'flex-active' : 'page-active');
@@ -348,20 +368,9 @@
             document.getElementById('nav-profile').classList.toggle('nav-active', pageId === 'profile-page');
         };
 
-        window.toggleModal = (id, show) => document.getElementById(id).classList.toggle('hidden', !show);
-
-        document.getElementById('save-profile-btn').onclick = async () => {
-            await update(ref(db, `users/${auth.currentUser.uid}`), {
-                username: document.getElementById('edit-username').value,
-                phone: document.getElementById('edit-phone').value
-            });
-            alert("Sove!");
-        };
-
-        document.getElementById('upload-profile').onchange = (e) => {
-            const reader = new FileReader();
-            reader.onloadend = async () => await update(ref(db, `users/${auth.currentUser.uid}`), { profilePic: reader.result });
-            if (e.target.files[0]) reader.readAsDataURL(e.target.files[0]);
+        window.toggleModal = (id, show) => {
+            const el = document.getElementById(id);
+            if(show) { el.classList.remove('hidden'); } else { el.classList.add('hidden'); }
         };
 
         document.getElementById('main-btn').onclick = async () => {
