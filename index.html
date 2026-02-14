@@ -144,18 +144,20 @@
                 <h2 class="text-xl font-black italic text-blue-500 uppercase">Lage yon defi</h2>
                 <button onclick="toggleModal('bet-modal', false)" class="text-gray-400"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg></button>
             </div>
-            <div class="space-y-3">
+            <div class="space-y-3 no-scrollbar overflow-y-auto max-h-[70vh]">
                 <select id="bet-game" class="w-full p-4 rounded-2xl input-field text-sm">
                     <option value="Free Fire">Free Fire</option>
                     <option value="CODM">CODM</option>
                     <option value="PUBG">PUBG</option>
                     <option value="Blood Strike">Blood Strike</option>
+                    <option value="DLS">DLS (Dream League)</option>
                 </select>
-                <input type="text" id="bet-uid" placeholder="ID Jwèt ou (UID)" class="w-full p-4 rounded-2xl input-field text-sm border-blue-500/50">
-                <input type="text" id="bet-room" placeholder="ID Room / Modpas" class="w-full p-4 rounded-2xl input-field text-sm border-blue-500/50">
+                <input type="text" id="bet-uid" placeholder="ID Jwèt ou (UID)" class="w-full p-4 rounded-2xl input-field text-sm">
+                <input type="text" id="bet-room" placeholder="ID Room" class="w-full p-4 rounded-2xl input-field text-sm">
+                <input type="text" id="bet-room-pass" placeholder="Modpas Room (Si pa genyen, kitel vid)" class="w-full p-4 rounded-2xl input-field text-sm border-blue-400/30">
                 <input type="number" id="bet-amount" placeholder="Montan HTG (Min 100)" class="w-full p-4 rounded-2xl input-field text-sm">
-                <textarea id="bet-rules" placeholder="Règleman (ex: 1v1 Sniper, Pa gen Grenad)..." class="w-full p-4 rounded-2xl input-field text-sm h-20"></textarea>
-                <button id="confirm-bet-btn" class="w-full bg-blue-600 py-4 rounded-2xl font-black shadow-lg shadow-blue-600/20 active:scale-95 transition-all">PUBLYE PARI A</button>
+                <textarea id="bet-rules" placeholder="Règleman defi a..." class="w-full p-4 rounded-2xl input-field text-sm h-20"></textarea>
+                <button id="confirm-bet-btn" class="w-full bg-blue-600 py-4 rounded-2xl font-black shadow-lg active:scale-95 transition-all uppercase text-xs">Pibliye Defi</button>
             </div>
         </div>
     </div>
@@ -221,7 +223,7 @@
         }
 
         window.cancelChallenge = async (id, amount) => {
-            if (confirm("Anile defi sa?")) {
+            if (confirm("Èske ou vle anile defi sa?")) {
                 await remove(ref(db, `challenges/${id}`));
                 await update(ref(db, `users/${auth.currentUser.uid}`), {
                     balance: currentUserData.balance + amount,
@@ -242,7 +244,7 @@
                             const isMine = c.creator_id === auth.currentUser.uid;
                             list.innerHTML += `
                             <div class="glass-card p-5 rounded-[2rem] border-l-4 ${isMine ? 'border-yellow-500' : 'border-blue-500'} animate__animated animate__fadeInUp">
-                                <div class="flex justify-between items-start mb-2">
+                                <div class="flex justify-between items-start mb-3">
                                     <div>
                                         <div class="flex items-center gap-2">
                                             <span class="w-2 h-2 ${isMine ? 'bg-yellow-500' : 'bg-green-500'} rounded-full"></span>
@@ -252,20 +254,22 @@
                                     </div>
                                     <p class="text-xl font-black text-green-400">${c.bet_amount} <span class="text-[10px]">HTG</span></p>
                                 </div>
-                                <div class="bg-black/30 p-3 rounded-xl mb-3 text-[10px] space-y-1">
-                                    <p><span class="text-gray-500">ID Jwèt:</span> <span class="text-white font-bold">${c.player_uid}</span></p>
-                                    <p><span class="text-gray-500">Room:</span> <span class="text-blue-300 font-bold">${c.room_id}</span></p>
-                                    <p class="italic text-gray-400 mt-1">"${c.rules}"</p>
+                                <div class="bg-black/40 p-3 rounded-2xl mb-4 text-[11px] space-y-1 border border-white/5">
+                                    <p><span class="text-gray-500">UID:</span> <span class="text-white">${c.player_uid}</span></p>
+                                    <p><span class="text-gray-500">Room:</span> <span class="text-white">${c.room_id}</span></p>
+                                    <p><span class="text-gray-500">Modpas:</span> <span class="text-blue-400 font-bold">${c.room_pass || 'Pa gen modpas'}</span></p>
+                                    <div class="h-[1px] bg-white/5 my-2"></div>
+                                    <p class="italic text-gray-400">"${c.rules}"</p>
                                 </div>
                                 ${isMine ? 
-                                    `<button onclick="cancelChallenge('${id}', ${c.bet_amount})" class="w-full bg-red-600/20 text-red-500 py-2 rounded-xl text-[10px] font-black uppercase border border-red-500/30">Anile</button>` : 
+                                    `<button onclick="cancelChallenge('${id}', ${c.bet_amount})" class="w-full bg-red-600/10 text-red-500 py-3 rounded-xl text-[10px] font-black uppercase border border-red-500/20">Anile Defi</button>` : 
                                     `<button class="w-full bg-blue-600 hover:bg-blue-700 py-3 rounded-xl text-[10px] font-black uppercase shadow-lg">Rejwenn Defi</button>`
                                 }
                             </div>`;
                         }
                     });
                 } else {
-                    list.innerHTML = "<p class='text-center opacity-20 py-10 italic text-xs uppercase tracking-widest'>Pa gen defi disponib</p>";
+                    list.innerHTML = "<p class='text-center opacity-20 py-10 italic text-xs uppercase'>Pa gen defi disponib</p>";
                 }
             });
         }
@@ -276,8 +280,9 @@
             const rules = document.getElementById('bet-rules').value.trim();
             const playerUid = document.getElementById('bet-uid').value.trim();
             const roomId = document.getElementById('bet-room').value.trim();
+            const roomPass = document.getElementById('bet-room-pass').value.trim();
 
-            if (!playerUid || !roomId) return alert("Ou dwe mete UID ou ak ID Room nan!");
+            if (!playerUid || !roomId) return alert("Mete UID ak ID Room nan!");
             if (amount < 100 || currentUserData.balance < amount) return alert("Balans ou pa ase!");
 
             try {
@@ -285,9 +290,10 @@
                 await set(challengeRef, {
                     creator_id: auth.currentUser.uid,
                     creator_name: currentUserData.username,
-                    game: game,
+                    game,
                     player_uid: playerUid,
                     room_id: roomId,
+                    room_pass: roomPass,
                     bet_amount: amount,
                     rules: rules || "Okenn règleman espesyal",
                     status: "open",
@@ -299,17 +305,14 @@
                     escrow: (currentUserData.escrow || 0) + amount
                 });
 
-                alert("Defi a pibliye ak siksè!");
+                alert("Defi pibliye!");
                 toggleModal('bet-modal', false);
-                // Reset fields
-                document.getElementById('bet-uid').value = "";
-                document.getElementById('bet-room').value = "";
-                document.getElementById('bet-amount').value = "";
-                document.getElementById('bet-rules').value = "";
+                // Reset bwat yo
+                ['bet-uid', 'bet-room', 'bet-room-pass', 'bet-amount', 'bet-rules'].forEach(id => document.getElementById(id).value = "");
             } catch (e) { alert(e.message); }
         };
 
-        // --- DEPO & RETRÈ ---
+        // --- DEPO, RETRÈ & UTILS ---
         document.getElementById('submit-depo').onclick = async () => {
             const transId = document.getElementById('depo-id').value.trim();
             const proofFile = document.getElementById('depo-proof').files[0];
@@ -337,7 +340,6 @@
             alert("Mande voye!"); toggleModal('withdraw-modal', false);
         };
 
-        // --- NAV & UTILS ---
         window.switchPage = (pageId) => {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('page-active', 'flex-active'));
             document.getElementById(pageId).classList.add(pageId === 'auth-page' ? 'flex-active' : 'page-active');
